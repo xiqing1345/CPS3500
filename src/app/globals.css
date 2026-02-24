@@ -1,12 +1,17 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* tech-themed color palette */
+  --background: #0f0f0f;
+  --foreground: #e0e0e0;
+  --accent: #00ffff;
+  --border: #444;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --accent: #00ffff;
+    --border: #666;
   }
 }
 
@@ -19,9 +24,21 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-mono), monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* subtle decorative overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(0,255,255,0.05), transparent 60%),
+              radial-gradient(circle at bottom right, rgba(0,255,255,0.05), transparent 60%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 * {
@@ -33,6 +50,176 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+a:hover {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent);
+}
+
+/* layout helpers */
+.main-content {
+  padding: 1rem;
+  min-height: 80vh;
+}
+
+/* navigation bar styling */
+.navbar {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar a {
+  color: var(--accent);
+  position: relative;
+}
+
+.navbar a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.navbar a:hover::after {
+  width: 100%;
+}
+
+/* project card styling */
+.project-card {
+  border: 1px solid var(--border);
+  padding: 1rem;
+  margin: 1rem 0;
+  background: rgba(20, 20, 20, 0.6);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px;
+}
+
+.project-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(0,255,255,0.3);
+}
+
+.project-card:hover {
+  transform: scale(1.02);
+}
+
+.project-card h3 {
+  color: var(--accent);
+}
+
+.project-card a {
+  color: var(--accent);
+}
+
+/* heading styles for tech theme */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  font-family: var(--font-orbitron), sans-serif;
+  position: relative;
+}
+
+h1 {
+  font-size: 2.4rem;
+}
+
+/* animated glow underline for headings */
+@keyframes accent-glow {
+  0%, 100% {text-shadow: 0 0 6px var(--accent);} 
+  50% {text-shadow: 0 0 14px var(--accent);} 
+}
+
+h1, h2 {
+  animation: accent-glow 3s ease-in-out infinite;
+}
+
+/* home page hero layout */
+.home-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(0,255,255,0.1), transparent);
+  border-radius: 12px;
+}
+
+.home-hero .hero-text {
+  flex: 1 1 300px;
+}
+
+.home-hero .hero-image {
+  flex: 0 0 200px;
+  max-width: 200px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0,255,255,0.6);
+  transition: transform 0.3s;
+}
+
+.home-hero .hero-image:hover {
+  transform: scale(1.05);
+}
+
+.home-hero .hero-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* container class for centering content */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.skills-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+
+.skills-list li::before {
+  content: '▹';
+  color: var(--accent);
+  margin-right: 0.5rem;
+}
+
+/* footer styling */
+.footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+  text-align: center;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.footer p::before {
+  content: '💻 ';
 }
 
 @media (prefers-color-scheme: dark) {

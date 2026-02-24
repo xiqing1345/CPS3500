@@ -4,7 +4,7 @@ export default function About() {
       <h1>About Me</h1>
       <p>I am a developer with experience in web and AI technologies.</p>
       <h2>Skills</h2>
-      <ul>
+      <ul className="skills-list">
         <li>JavaScript / TypeScript</li>
         <li>Next.js</li>
         <li>React</li>

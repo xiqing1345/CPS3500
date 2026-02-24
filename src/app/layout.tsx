@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 
+// retain existing fonts for fallback/accessibility
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -10,6 +11,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// new futuristic font for headings and overall vibe
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,9 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>        
+      <body className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable}`}>
         <Navbar />
-        <main style={{ padding: "1rem", minHeight: "80vh" }}>{children}</main>
+        <main className="main-content">
+          <div className="container">{children}</div>
+        </main>
         <Footer />
       </body>
     </html>

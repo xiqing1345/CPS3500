@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
-import { Configuration, OpenAIApi } from "openai";
+// openai v6 exports a single OpenAI class instead of Configuration/OpenAIApi
+import OpenAI from "openai";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { input, mode, tone, targetRole } = body;
 
-    if (!input || typeof input !== "string" || input.length < 20) {
-      return NextResponse.json({ error: "Input must be at least 20 characters" }, { status: 400 });
+    // basic input validation; extend as needed
+    if (
+      !input || typeof input !== "string" || input.length < 20 ||
+      !mode  || typeof mode  !== "string" ||
+      !tone  || typeof tone  !== "string"
+    ) {
+      return NextResponse.json({ error: "Missing or invalid parameters" }, { status: 400 });
     }
 
     const systemPrompt = `You are an assistant that helps craft text for resumes, LinkedIn summaries, or cover letters. Output should match the requested mode and tone.`;
@@ -19,12 +25,10 @@ export async function POST(request: Request) {
     Target Role: ${targetRole || ""}
     `;
 
-    const configuration = new Configuration({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-    const client = new OpenAIApi(configuration);
+    // initialize client using the new OpenAI class
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const response = await client.createChatCompletion({
+    const response = await client.chat.completions.create({
       model: "gpt-4.1-mini",
       messages: [
         { role: "system", content: systemPrompt },
@@ -33,7 +37,14 @@ export async function POST(request: Request) {
       max_tokens: 500,
     });
 
-    const text = response.data.choices[0]?.message?.content || "";
+    // v6 returns properties on the response object directly, not under `.data`
+    const choices = response?.choices;
+    if (!choices || choices.length === 0) {
+      console.error("no choices returned", response);
+      return NextResponse.json({ error: "No completion returned from OpenAI" }, { status: 502 });
+    }
+
+    const text = choices[0]?.message?.content || "";
     return NextResponse.json({ text });
   } catch (error: any) {
     console.error("resume api error", error);
