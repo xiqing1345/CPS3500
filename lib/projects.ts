@@ -6,6 +6,11 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: "AI Chat Demo",
+    description: "A simple interactive AI chat interface demonstrating conversation with an AI model.",
+    demoPath: "/ai-chat",
+  },
+  {
     title: "AI Resume / LinkedIn Helper",
     description: "An AI tool that helps you craft resume bullets, LinkedIn summaries, or cover letter paragraphs.",
     demoPath: "/ai-resume",
