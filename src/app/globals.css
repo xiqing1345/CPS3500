@@ -374,6 +374,53 @@ p {
   font-size: 0.8rem;
 }
 
+/* AI Resume fullscreen output */
+.resume-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+}
+
+.resume-fullscreen-panel {
+  width: min(1000px, 100%);
+  height: min(88vh, 900px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(10, 10, 10, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.resume-fullscreen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.resume-fullscreen-header h2 {
+  margin: 0;
+}
+
+.resume-fullscreen-textarea {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--foreground);
+  padding: 1rem;
+  line-height: 1.6;
+}
+
 /* footer styling */
 .footer {
   padding: 1rem;

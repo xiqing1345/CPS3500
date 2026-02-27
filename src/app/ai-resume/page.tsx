@@ -10,6 +10,7 @@ export default function AIResume() {
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const generate = async () => {
     setLoading(true);
@@ -95,8 +96,8 @@ export default function AIResume() {
         <div>
           <h2>Output</h2>
           <textarea
-            rows={6}
-            style={{ width: "100%" }}
+            rows={12}
+            style={{ width: "100%", minHeight: "320px" }}
             value={output}
             readOnly
           />
@@ -105,6 +106,25 @@ export default function AIResume() {
             <button onClick={generate} style={{ marginLeft: "0.5rem" }}>
               Regenerate
             </button>
+            <button onClick={() => setIsFullscreen(true)} style={{ marginLeft: "0.5rem" }}>
+              Fullscreen
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isFullscreen && (
+        <div className="resume-fullscreen-overlay">
+          <div className="resume-fullscreen-panel">
+            <div className="resume-fullscreen-header">
+              <h2>Output (Fullscreen)</h2>
+              <button onClick={() => setIsFullscreen(false)}>Close</button>
+            </div>
+            <textarea
+              className="resume-fullscreen-textarea"
+              value={output}
+              readOnly
+            />
           </div>
         </div>
       )}
