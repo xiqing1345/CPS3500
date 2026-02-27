@@ -10,6 +10,9 @@ export default function Home() {
           Check out my <a href="/projects" style={{ color: "var(--accent)" }}>projects</a>.
         </p>
         <p>This site features an <a href="/ai-resume" style={{ color: "var(--accent)" }}>AI Resume Helper</a> you can try out.</p>
+        <a href="/cv.pdf" download className="cv-download-btn">
+          Download CV
+        </a>
       </div>
       <div className="hero-image">
         <img src="/profile.jpg" alt="My Photo" />

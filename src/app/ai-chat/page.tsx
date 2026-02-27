@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,6 +12,21 @@ export default function AIChat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [greeting, setGreeting] = useState("");
+
+  useEffect(() => {
+    const fullText = "How can I help you today?";
+    let index = 0;
+    const timer = setInterval(() => {
+      index += 1;
+      setGreeting(fullText.slice(0, index));
+      if (index >= fullText.length) {
+        clearInterval(timer);
+      }
+    }, 45);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -49,6 +64,7 @@ export default function AIChat() {
     <div>
       <h1>AI Chat Demo</h1>
       <div className="chat-container">
+        <div className="chat-message assistant">{greeting}</div>
         {messages.map((m, idx) => (
           <div
             key={idx}
