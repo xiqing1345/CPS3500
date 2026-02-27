@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import FloatingAssistant from "../../components/FloatingAssistant";
 
 export default function RootLayout({
   children,
@@ -40,6 +41,7 @@ export default function RootLayout({
         <main className="main-content">
           <div className="container">{children}</div>
         </main>
+        <FloatingAssistant />
         <Footer />
       </body>
     </html>
