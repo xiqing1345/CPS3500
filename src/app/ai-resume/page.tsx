@@ -44,7 +44,7 @@ export default function AIResume() {
           <br />
           <textarea
             rows={6}
-            style={{ width: "100%" }}
+            style={{ width: "100%", fontSize: "1.05rem", lineHeight: 1.6 }}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
@@ -97,7 +97,7 @@ export default function AIResume() {
           <h2>Output</h2>
           <textarea
             rows={12}
-            style={{ width: "100%", minHeight: "320px" }}
+            style={{ width: "100%", minHeight: "320px", fontSize: "1.05rem", lineHeight: 1.6 }}
             value={output}
             readOnly
           />
