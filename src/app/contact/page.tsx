@@ -21,11 +21,11 @@ export default function Contact() {
       <p>
         GitHub: 
         <a
-          href="https://github.com/xiqing1345/CPS3500/tree/main/src/app/about"
+          href="https://github.com/xiqing1345"
           target="_blank"
           rel="noreferrer"
         >
-          github.com/xiqing1345/CPS3500
+          github.com/xiqing1345
         </a>
       </p>
 
