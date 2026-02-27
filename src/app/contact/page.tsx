@@ -19,6 +19,17 @@ export default function Contact() {
       </p>
 
       <p>
+        GitHub: 
+        <a
+          href="https://github.com/xiqing1345/CPS3500/tree/main/src/app/about"
+          target="_blank"
+          rel="noreferrer"
+        >
+          github.com/xiqing1345/CPS3500
+        </a>
+      </p>
+
+      <p>
         WeChat: ssz111q1
       </p>
 
