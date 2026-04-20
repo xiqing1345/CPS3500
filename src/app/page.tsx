@@ -1,65 +1,140 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState, useRef } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ChatPanel from '@/components/ChatPanel';
+import ProposalPanel from '@/components/ProposalPanel';
+import NotificationCenter from '@/components/NotificationCenter';
+import LoginMenu from '@/components/LoginMenu';
+import AIAssistant from '@/components/AIAssistant';
+import { Bell, MessageSquare, FileText, LogOut } from 'lucide-react';
 
 export default function Home() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('chat');
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [recentMessages, setRecentMessages] = useState<any[]>([]);
+  const notificationPollRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Check if user is logged in from localStorage
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchContextData = async () => {
+      const [unreadRes, proposalsRes, notifRes, allVotesRes, messagesRes] = await Promise.all([
+        fetch(`/api/notifications?userId=${currentUser.id}&unreadOnly=true`).then(r => r.json()).catch(() => ({})),
+        fetch(`/api/proposals?status=active`).then(r => r.json()).catch(() => []),
+        fetch(`/api/notifications?userId=${currentUser.id}`).then(r => r.json()).catch(() => ({})),
+        fetch(`/api/votes?all=true`).then(r => r.json()).catch(() => []),
+        fetch(`/api/messages?roomId=group`).then(r => r.json()).catch(() => []),
+      ]);
+      setUnreadCount(unreadRes.unreadCount || 0);
+      // Attach votes (with comments) to each proposal
+      const votesArr: any[] = Array.isArray(allVotesRes) ? allVotesRes : [];
+      const enrichedProposals = (Array.isArray(proposalsRes) ? proposalsRes : []).map((p: any) => ({
+        ...p,
+        votes: votesArr.filter((v: any) => v.proposalId === p.id),
+      }));
+      setProposals(enrichedProposals);
+      setNotifications(notifRes.notifications || []);
+      setRecentMessages(Array.isArray(messagesRes) ? messagesRes.slice(-20) : []);
+    };
+
+    fetchContextData();
+    notificationPollRef.current = setInterval(fetchContextData, 5000);
+
+    return () => {
+      if (notificationPollRef.current) clearInterval(notificationPollRef.current);
+    };
+  }, [currentUser]);
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+  };
+
+  if (!currentUser) {
+    return <LoginMenu onLoginSuccess={setCurrentUser} />;
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white shadow-lg sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white text-purple-600 flex items-center justify-center font-bold">
+              🏠
+            </div>
+            <h1 className="text-2xl font-bold">Dorm Communication System</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 bg-white bg-opacity-20 px-4 py-2 rounded-full">
+              <span>{currentUser.name}</span>
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                className="w-8 h-8 rounded-full"
+              />
+            </div>
+            <NotificationCenter userId={currentUser.id} unreadCount={unreadCount} />
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg flex items-center gap-2 transition"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <LogOut size={18} />
+              Sign Out
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-white shadow-md rounded-xl p-1">
+            <TabsTrigger value="chat" className="flex items-center gap-2">
+              <MessageSquare size={18} />
+              Chat
+            </TabsTrigger>
+            <TabsTrigger value="proposals" className="flex items-center gap-2">
+              <FileText size={18} />
+              Proposals
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell size={18} />
+              Notifications
+              {unreadCount > 0 && (
+                <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="chat" className="mt-6">
+            <ChatPanel currentUser={currentUser} />
+          </TabsContent>
+
+          <TabsContent value="proposals" className="mt-6">
+            <ProposalPanel currentUser={currentUser} />
+          </TabsContent>
+
+          <TabsContent value="notifications" className="mt-6">
+            <NotificationCenter userId={currentUser.id} detailed />
+          </TabsContent>
+        </Tabs>
       </main>
+      <AIAssistant screenContext={{ currentUser, activeTab, proposals, notifications, recentMessages }} />
     </div>
   );
 }
