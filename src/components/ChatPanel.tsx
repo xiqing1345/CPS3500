@@ -81,8 +81,7 @@ export default function ChatPanel({ currentUser }: ChatPanelProps) {
       } else {
         return;
       }
-      // API returns DESC order; reverse to show oldest first
-      const sorted = Array.isArray(data) ? [...data].reverse() : [];
+      const sorted = Array.isArray(data) ? data : [];
       setMessages(sorted);
     } catch (error) {
       console.error('Failed to fetch messages:', error);

@@ -15,30 +15,34 @@ export async function GET(request: NextRequest) {
       // Group chat
       messages = db
         .prepare(
-          `SELECT m.*, u.name, u.avatar 
-           FROM messages m 
-           JOIN users u ON m.authorId = u.id 
-           WHERE m.roomId = ? 
-           ORDER BY m.createdAt DESC 
-           LIMIT 50`
+          `SELECT * FROM (
+             SELECT m.*, u.name, u.avatar 
+             FROM messages m 
+             JOIN users u ON m.authorId = u.id 
+             WHERE m.roomId = ? 
+             ORDER BY m.createdAt DESC 
+             LIMIT 50
+           ) ORDER BY createdAt ASC`
         )
         .all(roomId);
     } else if (recipientId && userId) {
       // Private chat
       messages = db
         .prepare(
-          `SELECT m.*, u.name, u.avatar 
-           FROM messages m 
-           JOIN users u ON m.authorId = u.id 
-           WHERE (m.authorId = ? AND m.recipientId = ? AND m.isPrivate = 1)
-           OR (m.authorId = ? AND m.recipientId = ? AND m.isPrivate = 1)
-           ORDER BY m.createdAt DESC 
-           LIMIT 50`
+          `SELECT * FROM (
+             SELECT m.*, u.name, u.avatar 
+             FROM messages m 
+             JOIN users u ON m.authorId = u.id 
+             WHERE (m.authorId = ? AND m.recipientId = ? AND m.isPrivate = 1)
+             OR (m.authorId = ? AND m.recipientId = ? AND m.isPrivate = 1)
+             ORDER BY m.createdAt DESC 
+             LIMIT 50
+           ) ORDER BY createdAt ASC`
         )
         .all(userId, recipientId, recipientId, userId);
     }
 
-    return NextResponse.json(messages?.reverse() || []);
+    return NextResponse.json(messages || []);
   } catch (error) {
     console.error('Message fetch error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

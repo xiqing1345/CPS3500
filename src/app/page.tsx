@@ -7,7 +7,8 @@ import ProposalPanel from '@/components/ProposalPanel';
 import NotificationCenter from '@/components/NotificationCenter';
 import LoginMenu from '@/components/LoginMenu';
 import AIAssistant from '@/components/AIAssistant';
-import { Bell, MessageSquare, FileText, LogOut } from 'lucide-react';
+import ActiveRulesPanel from '@/components/ActiveRulesPanel';
+import { Bell, MessageSquare, FileText, LogOut, ShieldCheck } from 'lucide-react';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -101,7 +102,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-white shadow-md rounded-xl p-1">
+          <TabsList className="grid w-full grid-cols-4 bg-white shadow-md rounded-xl p-1">
             <TabsTrigger value="chat" className="flex items-center gap-2">
               <MessageSquare size={18} />
               Chat
@@ -119,6 +120,10 @@ export default function Home() {
                 </span>
               )}
             </TabsTrigger>
+            <TabsTrigger value="rules" className="flex items-center gap-2">
+              <ShieldCheck size={18} />
+              Active Rules
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="chat" className="mt-6">
@@ -131,6 +136,10 @@ export default function Home() {
 
           <TabsContent value="notifications" className="mt-6">
             <NotificationCenter userId={currentUser.id} detailed />
+          </TabsContent>
+
+          <TabsContent value="rules" className="mt-6">
+            <ActiveRulesPanel />
           </TabsContent>
         </Tabs>
       </main>
